@@ -11,8 +11,12 @@
       name: nodejs
       state: present
   - name: adding user
-    ansible.builtin.command: useradd roboshop
+    ansible.builtin.user:
+      name: roboshop
   - name: preparing a directory
-    ansible.builtin.command: mkdir /app
+    ansible.builtin.file: 
+      path: /app
+      state: directory
+      
 
 
