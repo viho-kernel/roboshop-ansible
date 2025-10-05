@@ -5,9 +5,7 @@
   - name: disable defauly nodejs
     ansible.builtin.command: dnf module disable nodejs -y
   - name: enabling nodeJs 18 version
-    ansible.builtin.dnf:
-      name: nodejs:18
-      enabled: yes
+    ansible.builtin.command: dnf module enable nodejs:18 -y
   - name: installing nodeJs
     ansible.builtin.package:
       name: nodejs
