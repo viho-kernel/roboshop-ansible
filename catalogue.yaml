@@ -1,0 +1,21 @@
+- name: catalogue
+  hosts: catalogue
+  become: yes
+  tasks:
+  - name: disable defauly nodejs
+    ansible.builtin.command: dnf module disable nodejs -y
+  - name: enabling nodeJs 18 version
+    ansible.builtin.dnf:
+      name: nodejs
+      state: present
+  - name: installing nodeJs
+    ansible.builtin.package:
+      name: nodejs
+      state: started
+      enabled: yes
+  - name: adding user
+    ansible.builtin.command: useradd roboshop
+  - name: preparing a directory
+    ansible.builtin.command: mkdir /app
+
+
