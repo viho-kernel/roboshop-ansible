@@ -1,6 +1,7 @@
 - name: Setup Redis on target host
   hosts: redis
   become: yes
+  connection: ssh
   tasks:
     - name: Install remi-release RPM
       ansible.builtin.dnf:
