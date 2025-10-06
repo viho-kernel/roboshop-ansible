@@ -4,8 +4,8 @@
   tasks:
     - name: Install remi-release RPM
       ansible.builtin.dnf: 
-      install: https://rpms.remirepo.net/enterprise/remi-release-8.rpm
-      state: present
+        name: https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+        state: present
 
     - name: Enable Redis module
       ansible.builtin.command: dnf module enable redis:remi-6.2 -y
