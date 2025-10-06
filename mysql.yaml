@@ -2,9 +2,9 @@
   hosts: mysql
   become: yes
   tasks:
-    - name: Disable default NodeJS module
+    - name: Disable default MySQL module
       ansible.builtin.command:
-        cmd: dnf module disable nodejs -y
+        cmd: dnf module disable mysql -y
 
     - name: Copy MySQL repo file
       ansible.builtin.copy:
