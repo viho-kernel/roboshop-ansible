@@ -1,0 +1,23 @@
+- name: Setup MySQL on target host
+  hosts: mysql
+  become: yes
+  tasks:
+    - name: Disable default NodeJS module
+      ansible.builtin.command:
+        cmd: dnf module disable nodejs -y
+
+    - name: Copy MySQL repo file
+      ansible.builtin.copy:
+        src: mysql.repo
+        dest: /etc/yum.repos.d/mysql.repo
+
+    - name: Install MySQL server
+      ansible.builtin.dnf:
+        name: mysql-community-server
+        state: present
+
+    - name: Enable and start MySQL service
+      ansible.builtin.service:
+        name: mysqld
+        enabled: yes
+        state: started
