@@ -3,9 +3,9 @@
   become: yes
 
   tasks:
-    - name: Download remi-release RPM
+    - name: Download latest remi-release RPM
       ansible.builtin.get_url:
-        url: https://rpms.remirepo.net/enterprise/remi-release-8.3.rpm
+        url: https://rpms.remirepo.net/enterprise/remi-release.rpm
         dest: /tmp/remi-release.rpm
 
     - name: Install remi-release RPM
