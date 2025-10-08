@@ -3,9 +3,9 @@
   become: yes
 
   tasks:
-    - name: Download latest remi-release RPM
+    - name: Download remi-release RPM for CentOS 8
       ansible.builtin.get_url:
-        url: https://rpms.remirepo.net/enterprise/remi-release.rpm
+        url: https://rpms.remirepo.net/enterprise/8/remi/x86_64/remi-release-8.7-2.el8.remi.noarch.rpm
         dest: /tmp/remi-release.rpm
 
     - name: Install remi-release RPM
