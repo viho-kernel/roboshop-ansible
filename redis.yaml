@@ -3,8 +3,10 @@
   become: yes
   tasks:
     - name: Install remi-release RPM (compatible version)
-      ansible.builtin.command:
-        cmd: dnf install https://rpms.remirepo.net/enterprise/remi-release-8.3.rpm -y
+      ansible.builtin.dnf:
+        name: https://rpms.remirepo.net/enterprise/remi-release-8.3.rpm
+        state: present
+        disable_gpg_check: true
 
     - name: Enable Redis module
       ansible.builtin.command: dnf module enable redis:remi-6.2 -y
@@ -14,14 +16,14 @@
         name: redis
         state: present
 
-    - name: Update Redis bind IP
+    - name: allow remote connections
       ansible.builtin.replace:
-        path: /etc/redis.conf
+        path: /etc/redis/redis.conf
         regexp: '127.0.0.1'
         replace: '0.0.0.0'
 
     - name: Enable and start Redis service
       ansible.builtin.service:
         name: redis
-        enabled: yes
         state: started
+        enabled: yes
