@@ -67,7 +67,7 @@
       msg: "schema output: {{schema}}"
 
   - name: load cities data
-    ansible.builtin.shell: "mysql -h mysql.opsora.space -uroot -p{{mysql_password}}  < /app/db/shipping.sql"
+    ansible.builtin.shell: "mysql -h mysql.opsora.space -uroot -p{{mysql_password}}  < /app/db/master-data.sql"
     when: schema.stdout != "1"
 
   - name: start and enable shipping
