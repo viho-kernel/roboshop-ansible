@@ -1,10 +1,16 @@
 - name: Setup Redis on target host
   hosts: redis
   become: yes
+
   tasks:
-    - name: Install remi-release RPM (compatible version)
+    - name: Download remi-release RPM
+      ansible.builtin.get_url:
+        url: https://rpms.remirepo.net/enterprise/remi-release-8.3.rpm
+        dest: /tmp/remi-release.rpm
+
+    - name: Install remi-release RPM
       ansible.builtin.dnf:
-        name: https://rpms.remirepo.net/enterprise/remi-release-8.3.rpm
+        name: /tmp/remi-release.rpm
         state: present
         disable_gpg_check: true
 
@@ -16,11 +22,11 @@
         name: redis
         state: present
 
-    - name: allow remote connections
+    - name: Allow remote connections
       ansible.builtin.replace:
         path: /etc/redis/redis.conf
-        regexp: '127.0.0.1'
-        replace: '0.0.0.0'
+        regexp: '^bind\s+127\.0\.0\.1'
+        replace: 'bind 0.0.0.0'
 
     - name: Enable and start Redis service
       ansible.builtin.service:
