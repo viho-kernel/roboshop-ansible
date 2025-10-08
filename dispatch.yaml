@@ -1,0 +1,92 @@
+- name: disapatch
+  host: disapatch
+  become: yes
+
+  vars:
+    app_user: roboshop
+    app_dir: /app
+    dispatch_zip_url: https://roboshop-builds.s3.amazonaws.com/dispatch.zip
+    rabbitmq_host: RABBITMQ-IP
+    rabbitmq_user: roboshop
+    rabbitmq_pass: roboshop123
+
+  tasks:
+
+    - name: Install GoLang
+      dnf:
+        name: golang
+        state: present
+
+    - name: Add application user
+      user:
+        name: "{{ app_user }}"
+        shell: /bin/bash
+        create_home: yes
+
+    - name: Create application directory
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0755'
+
+    - name: Download Dispatch application code
+      get_url:
+        url: "{{ dispatch_zip_url }}"
+        dest: /tmp/dispatch.zip
+
+    - name: Unzip Dispatch application code
+      unarchive:
+        src: /tmp/dispatch.zip
+        dest: "{{ app_dir }}"
+        remote_src: yes
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+
+    - name: Initialize Go module
+      command: go mod init dispatch
+      args:
+        chdir: "{{ app_dir }}"
+      become_user: "{{ app_user }}"
+
+    - name: Download Go dependencies
+      command: go get
+      args:
+        chdir: "{{ app_dir }}"
+      become_user: "{{ app_user }}"
+
+    - name: Build Dispatch application
+      command: go build
+      args:
+        chdir: "{{ app_dir }}"
+      become_user: "{{ app_user }}"
+
+    - name: Create systemd service file for Dispatch
+      copy:
+        dest: /etc/systemd/system/dispatch.service
+        content: |
+          [Unit]
+          Description=Dispatch Service
+
+          [Service]
+          User={{ app_user }}
+          Environment=AMQP_HOST={{ rabbitmq_host }}
+          Environment=AMQP_USER={{ rabbitmq_user }}
+          Environment=AMQP_PASS={{ rabbitmq_pass }}
+          ExecStart={{ app_dir }}/dispatch
+          SyslogIdentifier=dispatch
+
+          [Install]
+          WantedBy=multi-user.target
+        mode: '0644'
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start Dispatch service
+      systemd:
+        name: dispatch
+        enabled: yes
+        state: started
