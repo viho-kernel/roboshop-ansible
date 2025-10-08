@@ -1,5 +1,5 @@
-- name: disapatch
-  hosts: disapatch
+- name: dispatch
+  hosts: dispatch
   become: yes
 
   vars:
